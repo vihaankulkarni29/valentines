@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Be My Valentine 💘</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg-overlay"></div>
+
+  <main id="game-root" aria-label="Valentine game">
+    <header class="hud">
+      <div class="score" aria-live="polite">Score: <span id="score">0</span></div>
+      <div class="target">Target: <span id="target">25</span></div>
+    </header>
+
+    <canvas id="game" width="360" height="640" aria-label="Game canvas"></canvas>
+
+    <div id="start-hint" class="hint">Tap or press Space to jump 💖</div>
+
+    <div id="retry" class="overlay hidden" role="dialog" aria-modal="true">
+      <div class="card">
+        <h2>Try again 💕</h2>
+        <p>You got this! One more run?</p>
+        <button id="retry-btn" class="primary">Retry</button>
+      </div>
+    </div>
+
+    <div id="win" class="overlay hidden" role="dialog" aria-modal="true">
+      <div class="card">
+        <h2>I’ve been wanting to ask you something…</h2>
+        <p class="question">Will you be my Valentine? 💖</p>
+        <div class="actions">
+          <button id="yes-btn" class="primary">Yes 💕</button>
+          <button id="no-btn" class="ghost">No 🙈</button>
+        </div>
+        <p id="final-message" class="final hidden">Yay!! You just made my whole day. 💘</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
