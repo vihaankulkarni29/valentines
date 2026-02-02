@@ -11,7 +11,7 @@ const noBtn = document.getElementById("no-btn");
 const finalMessage = document.getElementById("final-message");
 const startHint = document.getElementById("start-hint");
 
-const TARGET_SCORE = 25;
+const TARGET_SCORE = 23;
 const GRAVITY = 0.35;
 const JUMP = -6.5;
 const OBSTACLE_SPEED = 2.2;
