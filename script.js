@@ -14,14 +14,16 @@ const finalMessage = document.getElementById("final-message");
 const startHint = document.getElementById("start-hint");
 
 const TARGET_SCORE = 23;
-const GRAVITY = 0.28;
-const JUMP = -7.2;
-const OBSTACLE_SPEED = 1.7;
-const OBSTACLE_GAP = 185;
+const GRAVITY = 0.24;
+const JUMP = -7.6;
+const OBSTACLE_SPEED = 1.4;
+const OBSTACLE_GAP = 200;
 const OBSTACLE_WIDTH = 50;
-const OBSTACLE_INTERVAL = 1600;
+const OBSTACLE_INTERVAL = 1750;
 const BIRTHDAY_SCORE = 4;
 const BOOST_DURATION = 3000;
+const COLLISION_SKIP = 5;
+const COLLISION_COOLDOWN = 800;
 
 let player;
 let obstacles;
@@ -31,6 +33,7 @@ let lastTime = 0;
 let obstacleTimer = 0;
 let audioStarted = false;
 let boostTimer = 0;
+let collisionCooldown = 0;
 
 function resizeCanvas() {
   const rect = canvas.getBoundingClientRect();
@@ -53,6 +56,7 @@ function resetGame() {
   lastTime = performance.now();
   obstacleTimer = 0;
   boostTimer = 0;
+  collisionCooldown = 0;
   scoreEl.textContent = score.toString();
   targetEl.textContent = TARGET_SCORE.toString();
   retryOverlay.classList.add("hidden");
@@ -115,6 +119,10 @@ function update(delta) {
     boostTimer -= delta;
   }
 
+  if (collisionCooldown > 0) {
+    collisionCooldown -= delta;
+  }
+
   obstacles = obstacles.filter((obs) => obs.x + OBSTACLE_WIDTH > -20);
 
   if (player.y + player.radius > canvas.clientHeight || player.y - player.radius < 0) {
@@ -124,8 +132,8 @@ function update(delta) {
   obstacles.forEach((obs) => {
     const inX = player.x + player.radius > obs.x && player.x - player.radius < obs.x + OBSTACLE_WIDTH;
     const inGap = player.y - player.radius > obs.gapTop && player.y + player.radius < obs.gapTop + OBSTACLE_GAP;
-    if (inX && !inGap) {
-      loseGame();
+    if (inX && !inGap && collisionCooldown <= 0) {
+      skipWalls(obs, COLLISION_SKIP);
     }
   });
 }
@@ -171,6 +179,26 @@ function loseGame() {
 function winGame() {
   playing = false;
   winOverlay.classList.remove("hidden");
+}
+
+function skipWalls(hitObstacle, count) {
+  let skipped = 0;
+  obstacles.forEach((obs) => {
+    if (!obs.passed && skipped < count) {
+      obs.passed = true;
+      skipped += 1;
+      score += 1;
+    }
+  });
+
+  scoreEl.textContent = score.toString();
+  hitObstacle.x = -OBSTACLE_WIDTH - 40;
+  player.velocity = JUMP * 0.5;
+  collisionCooldown = COLLISION_COOLDOWN;
+
+  if (score >= TARGET_SCORE) {
+    winGame();
+  }
 }
 
 function tryPlayAudio() {
