@@ -12,7 +12,10 @@
   <main id="game-root" aria-label="Valentine game">
     <header class="hud">
       <div class="score" aria-live="polite">Score: <span id="score">0</span></div>
-      <div class="target">Target: <span id="target">25</span></div>
+      <div class="hud-right">
+        <div class="target">Target: <span id="target">23</span></div>
+        <button id="mute-btn" class="audio-toggle" aria-pressed="false" aria-label="Mute audio">🔊</button>
+      </div>
     </header>
 
     <canvas id="game" width="360" height="640" aria-label="Game canvas"></canvas>
@@ -35,10 +38,12 @@
           <button id="yes-btn" class="primary">Yes 💕</button>
           <button id="no-btn" class="ghost">No 🙈</button>
         </div>
-        <p id="final-message" class="final hidden">Yay!! You just made my whole day. 💘</p>
+        <p id="final-message" class="final hidden">I Love you TOOOO<br />Lets discuss what to do together</p>
       </div>
     </div>
   </main>
+
+  <audio id="bg-music" src="assets/audio/Floated%20By%20(audio).mp3" loop preload="auto"></audio>
 
   <script src="script.js"></script>
 </body>

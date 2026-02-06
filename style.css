@@ -20,7 +20,7 @@ html, body {
 }
 
 body {
-  background: url("assets/images/collage.jpg") center/cover no-repeat fixed;
+  background: url("assets/images/landing-collage.jpg") center/cover no-repeat fixed;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -66,11 +66,24 @@ body {
   z-index: 3;
 }
 
+.hud-right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
 .score, .target {
   background: rgba(255, 255, 255, 0.15);
   padding: 6px 12px;
   border-radius: 999px;
   font-size: 0.9rem;
+}
+
+.audio-toggle {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--cream);
+  padding: 6px 10px;
+  min-width: 44px;
 }
 
 .hint {

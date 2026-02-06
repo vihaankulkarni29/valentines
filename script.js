@@ -8,6 +8,8 @@ const retryBtn = document.getElementById("retry-btn");
 const winOverlay = document.getElementById("win");
 const yesBtn = document.getElementById("yes-btn");
 const noBtn = document.getElementById("no-btn");
+const muteBtn = document.getElementById("mute-btn");
+const bgMusic = document.getElementById("bg-music");
 const finalMessage = document.getElementById("final-message");
 const startHint = document.getElementById("start-hint");
 
@@ -25,6 +27,7 @@ let score;
 let playing;
 let lastTime = 0;
 let obstacleTimer = 0;
+let audioStarted = false;
 
 function resizeCanvas() {
   const rect = canvas.getBoundingClientRect();
@@ -58,6 +61,7 @@ function jump() {
   if (!playing) {
     resetGame();
   }
+  tryPlayAudio();
   player.velocity = JUMP;
   startHint.classList.add("hidden");
 }
@@ -154,16 +158,25 @@ function winGame() {
   winOverlay.classList.remove("hidden");
 }
 
-function moveNoButton() {
-  const card = winOverlay.querySelector(".card");
-  const cardRect = card.getBoundingClientRect();
-  const maxX = cardRect.width - noBtn.offsetWidth - 20;
-  const maxY = cardRect.height - noBtn.offsetHeight - 20;
-  const nextX = Math.random() * maxX + 10;
-  const nextY = Math.random() * maxY + 10;
-  noBtn.style.position = "absolute";
-  noBtn.style.left = `${nextX}px`;
-  noBtn.style.top = `${nextY}px`;
+function tryPlayAudio() {
+  if (!bgMusic || audioStarted) return;
+  bgMusic.volume = 0.35;
+  bgMusic.play().then(() => {
+    audioStarted = true;
+  }).catch(() => {
+    audioStarted = false;
+  });
+}
+
+function toggleMute() {
+  if (!bgMusic) return;
+  const nextMuted = !bgMusic.muted;
+  bgMusic.muted = nextMuted;
+  muteBtn.textContent = nextMuted ? "🔇" : "🔊";
+  muteBtn.setAttribute("aria-pressed", nextMuted.toString());
+  if (!nextMuted) {
+    tryPlayAudio();
+  }
 }
 
 function handleInput(event) {
@@ -193,12 +206,9 @@ yesBtn.addEventListener("click", () => {
   noBtn.disabled = true;
 });
 
-noBtn.addEventListener("mouseenter", moveNoButton);
-noBtn.addEventListener("click", moveNoButton);
-noBtn.addEventListener("touchstart", (event) => {
-  event.preventDefault();
-  moveNoButton();
-});
+if (muteBtn) {
+  muteBtn.addEventListener("click", toggleMute);
+}
 
 resizeCanvas();
 resetGame();
