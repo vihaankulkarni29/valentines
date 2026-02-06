@@ -14,12 +14,14 @@ const finalMessage = document.getElementById("final-message");
 const startHint = document.getElementById("start-hint");
 
 const TARGET_SCORE = 23;
-const GRAVITY = 0.35;
-const JUMP = -6.5;
-const OBSTACLE_SPEED = 2.2;
-const OBSTACLE_GAP = 150;
+const GRAVITY = 0.28;
+const JUMP = -7.2;
+const OBSTACLE_SPEED = 1.7;
+const OBSTACLE_GAP = 185;
 const OBSTACLE_WIDTH = 50;
-const OBSTACLE_INTERVAL = 1300;
+const OBSTACLE_INTERVAL = 1600;
+const BIRTHDAY_SCORE = 4;
+const BOOST_DURATION = 3000;
 
 let player;
 let obstacles;
@@ -28,6 +30,7 @@ let playing;
 let lastTime = 0;
 let obstacleTimer = 0;
 let audioStarted = false;
+let boostTimer = 0;
 
 function resizeCanvas() {
   const rect = canvas.getBoundingClientRect();
@@ -49,6 +52,7 @@ function resetGame() {
   playing = true;
   lastTime = performance.now();
   obstacleTimer = 0;
+  boostTimer = 0;
   scoreEl.textContent = score.toString();
   targetEl.textContent = TARGET_SCORE.toString();
   retryOverlay.classList.add("hidden");
@@ -79,7 +83,10 @@ function addObstacle() {
 }
 
 function update(delta) {
-  player.velocity += GRAVITY;
+  const speedMultiplier = boostTimer > 0 ? 0.7 : 1;
+  const gravityMultiplier = boostTimer > 0 ? 0.8 : 1;
+
+  player.velocity += GRAVITY * gravityMultiplier;
   player.y += player.velocity;
 
   obstacleTimer += delta;
@@ -89,16 +96,24 @@ function update(delta) {
   }
 
   obstacles.forEach((obs) => {
-    obs.x -= OBSTACLE_SPEED;
+    obs.x -= OBSTACLE_SPEED * speedMultiplier;
     if (!obs.passed && obs.x + OBSTACLE_WIDTH < player.x - player.radius) {
       obs.passed = true;
       score += 1;
       scoreEl.textContent = score.toString();
+      if (score === BIRTHDAY_SCORE) {
+        boostTimer = BOOST_DURATION;
+        player.velocity = JUMP * 0.7;
+      }
       if (score >= TARGET_SCORE) {
         winGame();
       }
     }
   });
+
+  if (boostTimer > 0) {
+    boostTimer -= delta;
+  }
 
   obstacles = obstacles.filter((obs) => obs.x + OBSTACLE_WIDTH > -20);
 
